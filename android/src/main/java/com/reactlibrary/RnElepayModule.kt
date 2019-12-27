@@ -19,12 +19,6 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
     override fun getName(): String = "Elepay"
 
     @ReactMethod
-    fun sampleMethod(stringArgument: String, numberArgument: Int, callback: Callback) {
-        // TODO: Implement some actually useful functionality
-        callback.invoke("Received numberArgument: " + numberArgument + " stringArgument: " + stringArgument)
-    }
-
-    @ReactMethod
     fun initElepayWithPublicKey(publicKey: String, apiUrl: String) {
         Elepay.setup(ElepayConfiguration(publicKey, apiUrl, null))
     }

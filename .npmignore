@@ -1,10 +1,9 @@
 node_modules
 .env
 env
-src
 .git
 .DS_Store
 .npmrc
 npm-debug.log
 webpack.*
-Pods/
+ios/Pods/
