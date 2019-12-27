@@ -1,0 +1,41 @@
+{
+  "name": "elepay-react-native",
+  "title": "Elepay React Native",
+  "version": "1.0.0-beta.1",
+  "description": "React Native wrapper library for elepay SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elestyle/elepay-react-native"
+  },
+  "bugs": {
+    "url": "https://github.com/elestyle/elepay-react-native/issues"
+  },
+  "keywords": [
+    "elepay",
+    "ios",
+    "android",
+    "payment",
+    "cashless",
+    "react-native",
+    "react"
+  ],
+  "author": {
+    "name": "elestyle, Inc.",
+    "email": "info@elestyle.jp"
+  },
+  "homepage": "https://elepay.io",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "peerDependencies": {
+    "react": "^16.9.0",
+    "react-native": ">=0.61.5 <1.0.x"
+  },
+  "devDependencies": {
+    "react": "^16.9.0",
+    "react-native": "^0.61.5"
+  }
+}

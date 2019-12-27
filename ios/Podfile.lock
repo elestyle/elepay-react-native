@@ -1,0 +1,20 @@
+PODS:
+  - ElePay (1.7.1):
+    - Stripe (= 17.0.2)
+  - Stripe (17.0.2)
+
+DEPENDENCIES:
+  - ElePay
+
+SPEC REPOS:
+  trunk:
+    - ElePay
+    - Stripe
+
+SPEC CHECKSUMS:
+  ElePay: f5948fc8935e6067c4f0a8db28bd93077d6343e9
+  Stripe: 6c9ab10f087ca76c3cd7311462e383434921bdf8
+
+PODFILE CHECKSUM: b8808f2218e33a70c7e5431f68ef004ce85d88b6
+
+COCOAPODS: 1.8.4

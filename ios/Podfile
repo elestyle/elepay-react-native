@@ -1,0 +1,7 @@
+platform :ios, '9.0'
+
+target 'RnElepay' do
+  use_frameworks!
+
+  pod 'ElePay'
+end
