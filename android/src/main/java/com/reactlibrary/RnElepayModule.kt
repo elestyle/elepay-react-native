@@ -19,18 +19,24 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
     override fun getName(): String = "Elepay"
 
     @ReactMethod
-    fun initElepayWithPublicKey(publicKey: String, apiUrl: String) {
-        Elepay.setup(ElepayConfiguration(publicKey, apiUrl, null))
-    }
-
-    @ReactMethod
-    fun initElepayWithPublicKeyAndGooglePayConfig(publicKey: String, apiUrl: String, googlePayEnvironment: String?) {
-        val googlePayEnv =
-            if (googlePayEnvironment != null) {
-                if (googlePayEnvironment.toLowerCase().contains("test")) GooglePayEnvironment.TEST
-                else GooglePayEnvironment.PRODUCTION
-            } else null
-        Elepay.setup(ElepayConfiguration(publicKey, apiUrl, googlePayEnv))
+    fun initElepay(configs: ReadableMap) {
+        val pKey = if (configs.hasKey("publicKey")) {
+            try { configs.getString("publicKey") ?: "" } catch (e: Exception) { "" }
+        } else ""
+        val apiUrl = if (configs.hasKey("apiUrl")) {
+            try { configs.getString("apiUrl") ?: "" } catch (e: Exception) { "" }
+        } else ""
+        val googlePayEnv = if (configs.hasKey("googlePayEnvironment")) {
+            try {
+                configs.getString("googlePayEnvironment")?.let {
+                    if (it.toLowerCase().contains("test")) GooglePayEnvironment.TEST
+                    else GooglePayEnvironment.PRODUCTION
+                } ?: null
+            } catch (e: Exception) {
+                null
+            }
+        } else null
+        Elepay.setup(ElepayConfiguration(pKey, apiUrl, googlePayEnv))
     }
 
     @ReactMethod

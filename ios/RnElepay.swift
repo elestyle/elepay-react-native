@@ -35,7 +35,9 @@ fileprivate struct RnElepayError {
 final class ElepayModule: NSObject {
 
     @objc
-    func initElepay(publicKey: String, apiUrl: String?) {
+    func initElepay(_ configs: Dictionary<String, String>) {
+        let publicKey = configs["publicKey"] ?? ""
+        let apiUrl = configs["apiUrl"] ?? ""
         ElePay.initApp(key: publicKey, apiURLString: apiUrl)
     }
 
