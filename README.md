@@ -64,7 +64,9 @@ NativeModules.Elepay.initElepay({
 //   "state": "succeeded",
 //   "paymentId": "the payment id"
 // }
-// "error" is available when there's something wrong.
+// "state" indicates the current payment's result, available values are: "succeeded"/"cancelled"/"failed"
+//
+// "error" is available when "state" is "failed". The structure is:
 // {
 //   "code": "error code"
 //   "reasose": "the reason of the error"
