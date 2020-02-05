@@ -96,6 +96,24 @@ Then in your app's `AppDeletage.m`, add the following code to let React Native h
   return [RCTLinkingManager application:app openURL:url options:options];
 }
 ```
+Finally, in your app's js source, listen to `Linking` module's url event and pass the url to elepay SDK:
+```JavaScript
+    if (Platform.OS === 'android') {
+      // On Android, just let the react handles the url.
+      Linking.getInitialURL().then(url => {
+        this.navigate(url)
+      })
+    } else {
+      // Register url event listener on iOS.
+      Linking.addEventListener('url', this._handleOpenURL)
+    }
+
+    // ...
+
+    _handleOpenURL(event) {
+      NativeModules.Elepay.handleOpenUrlString(event.url)
+    }
+```
 
 ### Android
 
