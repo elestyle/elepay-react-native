@@ -85,18 +85,7 @@ NativeModules.Elepay.handlePaymentWithPayload(
 
 Some payment methods(like Line Pay, PayPay, etc.) require to process the payment outside your app. You need to setup the app with extras configurations.
 
-### iOS
-
-Your app needs to be configured with URL scheme and `LSApplicationQueriesSchemes`.
-For detail configurations, please [refere to elepay iOS SDK document](https://developer.elepay.io/docs/ios-sdk)
-
-Then in your app's `AppDeletage.m`, add the following code to let React Native handles the callback.
-```Objective-C
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-  return [RCTLinkingManager application:app openURL:url options:options];
-}
-```
-Finally, in your app's js source, listen to `Linking` module's url event and pass the url to elepay SDK:
+First, in your app's js source, listen to `Linking` module's url event and pass the url to elepay SDK:
 ```JavaScript
     if (Platform.OS === 'android') {
       // On Android, just let the react handles the url.
@@ -113,6 +102,18 @@ Finally, in your app's js source, listen to `Linking` module's url event and pas
     _handleOpenURL(event) {
       NativeModules.Elepay.handleOpenUrlString(event.url)
     }
+```
+
+### iOS
+
+Your app needs to be configured with URL scheme and `LSApplicationQueriesSchemes`.
+For detail configurations, please [refere to elepay iOS SDK document](https://developer.elepay.io/docs/ios-sdk)
+
+Then in your app's `AppDeletage.m`, add the following code to let React Native handles the callback.
+```Objective-C
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  return [RCTLinkingManager application:app openURL:url options:options];
+}
 ```
 
 ### Android
