@@ -12,7 +12,9 @@ yarn add elepay-react-native --save
 ## Setup
 
 ### iOS
-> Note: CocoaPods is required.
+> Note:
+> * CocoaPods is required.
+> * The native iOS SDK requires the deployment target OS version to be minimus as **10.0**. Make sure both your iOS projects and your Podfile has the correct setting.
 
 * Go to the ios folder of your project.
 ```bash
@@ -28,6 +30,9 @@ pod install
 ```
 
 ### Android
+
+> Note:
+> * The native Android SDK requires `minSdkVersion` to be **21**. If you see build errors relative to the `minSdkVersion`, please check your Android project settings.
 
 elepay Android SDK hosted in a separated github repository.
 Add the following code to your app project's `repositories` block of the root `build.gradle` file.
