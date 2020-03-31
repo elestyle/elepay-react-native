@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency "React"
-  s.dependency "ElePay"
+  s.dependency "ElePay", "1.7.7"
   s.dependency "ElePay-ChinesePayments-Plugin"
   s.dependency "Braintree"
 end
