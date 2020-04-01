@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
 
   s.dependency "React"
   s.dependency "ElePay", "1.7.7"
-  s.dependency "ElePay-ChinesePayments-Plugin"
+  s.dependency "ElePay-ChinesePayments-Plugin", "1.1.4"
   s.dependency "Braintree"
 end
 
