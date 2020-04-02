@@ -39,6 +39,13 @@ final class ElepayModule: NSObject {
         let publicKey = configs["publicKey"] ?? ""
         let apiUrl = configs["apiUrl"] ?? ""
         ElePay.initApp(key: publicKey, apiURLString: apiUrl)
+
+        performChangingLanguage(langConfig: configs)
+    }
+
+    @objc
+    func changeLanguage(_ langConfig: Dictionary<String, String>) {
+        performChangingLanguage(langConfig: langConfig)
     }
 
     @objc
@@ -58,6 +65,25 @@ final class ElepayModule: NSObject {
         DispatchQueue.main.async { [weak self] in
             self?.processPayment(payload: payload, resultHandler: callback)
         }
+    }
+
+    private func performChangingLanguage(langConfig: [String: String]) {
+        let langCodeStr = langConfig["languageKey"] ?? ""
+        if let langCode = retrieveLanguageCode(from: langCodeStr) {
+            ElePayLocalization.shared.switchLanguage(code: langCode)
+        }
+    }
+
+    private func retrieveLanguageCode(from langStr: String) -> ElePayLanguageCode? {
+        let ret: ElePayLanguageCode?
+        switch (langStr.lowercased()) {
+            case "english": ret = .en
+            case "simplifiedchinise": ret = .cn
+            case "traditionalchinese": ret = .tw
+            case "japanese": ret = .ja
+            default: ret = nil
+        }
+        return ret
     }
 
     private func processPayment(payload: String, resultHandler: @escaping RCTResponseSenderBlock) {

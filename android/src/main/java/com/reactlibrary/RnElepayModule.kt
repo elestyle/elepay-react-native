@@ -13,6 +13,7 @@ import jp.elestyle.androidapp.elepay.ElepayError
 import jp.elestyle.androidapp.elepay.ElepayResult
 import jp.elestyle.androidapp.elepay.ElepayResultListener
 import jp.elestyle.androidapp.elepay.GooglePayEnvironment
+import jp.elestyle.androidapp.elepay.utils.locale.LanguageKey
 import org.json.JSONObject
 
 class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJavaModule(reactContext) {
@@ -37,7 +38,20 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
                 null
             }
         } else null
-        Elepay.setup(ElepayConfiguration(pKey, apiUrl, googlePayEnv))
+        val languageKeyStr = if (configs.hasKey("languageKey")) {
+            try { configs.getString("languageKey") ?: "" } catch (e: Exception) { "" }
+        } else ""
+        val languageKey = retrieveLanguageKey(languageKeyStr)
+        Elepay.setup(ElepayConfiguration(pKey, apiUrl, googlePayEnv, languageKey))
+    }
+
+    @ReactMethod
+    fun changeLanguage(langConfig: ReadableMap) {
+        val languageKeyStr = if (langConfig.hasKey("languageKey")) {
+            try { langConfig.getString("languageKey") ?: "" } catch (e: Exception) { "" }
+        } else ""
+        val languageKey = retrieveLanguageKey(languageKeyStr)
+        Elepay.changeLanguageKey(languageKey)
     }
 
     @ReactMethod
@@ -89,4 +103,13 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
             }
         }
     }
+
+    private fun retrieveLanguageKey(languageKeyStr: String): LanguageKey =
+        when (languageKeyStr.toLowerCase()) {
+            "english" -> LanguageKey.English
+            "simplifiedchinise" -> LanguageKey.SimplifiedChinise
+            "traditionalchinese" -> LanguageKey.TraditionalChinese
+            "japanese" -> LanguageKey.Japanese
+            else -> LanguageKey.System
+        }
 }

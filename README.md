@@ -55,11 +55,28 @@ import { NativeModules } from 'react-native'
 // "publicKey": String value. Required. Can be retrieved from your elepay account's dashboard page.
 // "hostUrl": String value. Optional. Indicates the server url that you want to customised. Omitted to use elepay's server.
 // "googlePayEnvironment": String value. "test" or "production". Used to setup Google Pay, can be omitted if Google Pay is not used.
+// "languageKey": String value. Availabile values are "English", "SimplifiedChinise", "TraditionalChinese" and "Japanese". Could be omitted. elepay SDK will try to use the system language settings, and fallback to "English" if no supported languages are found.
 NativeModules.Elepay.initElepay({
   publicKey: "the public key string",
   apiUrl: "a customised url string, can be omitted",
-  googlePayEnvironment: "either 'test' or 'product' if presented. Can be omitted if Google Pay is not used"
+  googlePayEnvironment: "either 'test' or 'product' if presented. Can be omitted if Google Pay is not used",
+  languageKey: "one of 'English', 'SimplifiedChinise', 'TraditionalChinese', 'Janapese'. Can be omitted."
 })
+
+// Change localization of elepay UI component.
+//
+// Currently elepay SDK supports the following 4 languages:
+//  * English
+//  * Simplified Chinese
+//  * Traditional Chinese
+//  * Japanese
+//
+// Note: this method should be called **AFTER** `initElepay` and before `handlePaymentWithPayload`.
+// Any invoking before `initELepay` won't work. But this method only requires being called once.
+NativeModules.Elepay.changeLanguage({
+    languageKey: 'Japanese' // or 'English', 'SimplifiedChinise', 'TraditionalChinese'
+});
+
 
 // Process payment after charging.
 //
