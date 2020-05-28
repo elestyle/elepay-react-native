@@ -9,6 +9,11 @@ React Native wrapper of elepay SDK.
 yarn add elepay-react-native --save
 ```
 
+Note: this sdk only wraps the basic native elepay SDK(iOS/Android).
+Some payment methods may require individual dependency setup. Please refer to the official guide for details.
+* [elepay iOS SDK document](https://developer.elepay.io/docs/ios-sdk)
+* [elepay Android SDK document](https://developer.elepay.io/docs/android-sdk)
+
 ## Setup
 
 ### iOS

@@ -100,7 +100,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'jp.elestyle.androidapp:elepay:1.7.1'
+    implementation 'jp.elestyle.androidapp:elepay:1.8.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
