@@ -61,45 +61,63 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
     @ReactMethod
     fun handlePaymentWithPayload(payload: String, resultHandler: Callback) {
         Elepay.processPayment(chargeDataString = payload, fromActivity = getCurrentActivity()!!) { result ->
-            when (result) {
-                is ElepayResult.Succeeded ->
-                    resultHandler.invoke(RnElepayResult("succeeded", result.paymentId).asMap)
+            processElepayResult(result, resultHandler)
+        }
+    }
 
-                is ElepayResult.Canceled ->
-                    resultHandler.invoke(RnElepayResult("cancelled", result.paymentId).asMap)
+    @ReactMethod
+    fun handleSourceWithPayload(payload: String, resultHandler: Callback) {
+        Elepay.processSource(sourceString = payload, fromActivity = getCurrentActivity()!!) { result ->
+            processElepayResult(result, resultHandler)
+        }
+    }
 
-                is ElepayResult.Failed -> {
-                    val rnElepayError = when (val error = result.error) {
-                        is ElepayError.UnsupportedPaymentMethod ->
-                            RnElepayError("", "Unsupported payment method", error.paymentMethod)
+    @ReactMethod
+    fun checkoutWithPayload(payload: String, resultHandler: Callback) {
+        Elepay.checkout(checkoutJsonString = payload, fromActivity = getCurrentActivity()!!) { result ->
+            processElepayResult(result, resultHandler)
+        }
+    }
 
-                        is ElepayError.AlreadyMakingPayment ->
-                            RnElepayError("", "Already making payment", error.paymentId)
+    private fun processElepayResult(result: ElepayResult, resultHandler: Callback) {
+        when (result) {
+            is ElepayResult.Succeeded ->
+                resultHandler.invoke(RnElepayResult("succeeded", result.paymentId).asMap)
 
-                        is ElepayError.InvalidPayload ->
-                            RnElepayError(error.errorCode, "Invalid payload", error.message)
+            is ElepayResult.Canceled ->
+                resultHandler.invoke(RnElepayResult("cancelled", result.paymentId).asMap)
 
-                        is ElepayError.UninitializedPaymentMethod ->
-                            RnElepayError(
-                                error.errorCode,
-                                "Uninitialized payment method",
-                                "${error.paymentMethod} ${error.message}"
-                            )
+            is ElepayResult.Failed -> {
+                val rnElepayError = when (val error = result.error) {
+                    is ElepayError.UnsupportedPaymentMethod ->
+                        RnElepayError("", "Unsupported payment method", error.paymentMethod)
 
-                        is ElepayError.SystemError ->
-                            RnElepayError(error.errorCode, "System Error", error.message)
+                    is ElepayError.AlreadyMakingPayment ->
+                        RnElepayError("", "Already making payment", error.paymentId)
 
-                        is ElepayError.PaymentFailure ->
-                            RnElepayError(error.errorCode, "Payment failure", error.message)
+                    is ElepayError.InvalidPayload ->
+                        RnElepayError(error.errorCode, "Invalid payload", error.message)
 
-                        is ElepayError.PermissionRequired ->
-                            RnElepayError("", "Permissions required", error.permissions.joinToString(", "))
-                    }
-                    resultHandler.invoke(
-                        RnElepayResult("failed", result.paymentId).asMap,
-                        rnElepayError.asMap
-                    )
+                    is ElepayError.UninitializedPaymentMethod ->
+                        RnElepayError(
+                            error.errorCode,
+                            "Uninitialized payment method",
+                            "${error.paymentMethod} ${error.message}"
+                        )
+
+                    is ElepayError.SystemError ->
+                        RnElepayError(error.errorCode, "System Error", error.message)
+
+                    is ElepayError.PaymentFailure ->
+                        RnElepayError(error.errorCode, "Payment failure", error.message)
+
+                    is ElepayError.PermissionRequired ->
+                        RnElepayError("", "Permissions required", error.permissions.joinToString(", "))
                 }
+                resultHandler.invoke(
+                    RnElepayResult("failed", result.paymentId).asMap,
+                    rnElepayError.asMap
+                )
             }
         }
     }
@@ -110,6 +128,7 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
             "simplifiedchinise" -> LanguageKey.SimplifiedChinise
             "traditionalchinese" -> LanguageKey.TraditionalChinese
             "japanese" -> LanguageKey.Japanese
+            "system" -> LanguageKey.System
             else -> LanguageKey.System
         }
 }

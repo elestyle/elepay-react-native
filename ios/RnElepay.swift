@@ -3,7 +3,7 @@
 // Copyright © 2019 elestyle. All rights reserved.
 //
 
-import ElePay
+import ElepaySDK
 
 fileprivate struct RnElepayResult {
     let state: String
@@ -38,7 +38,7 @@ final class ElepayModule: NSObject {
     func initElepay(_ configs: Dictionary<String, String>) {
         let publicKey = configs["publicKey"] ?? ""
         let apiUrl = configs["apiUrl"] ?? ""
-        ElePay.initApp(key: publicKey, apiURLString: apiUrl)
+        Elepay.initApp(key: publicKey, apiURLString: apiUrl)
 
         performChangingLanguage(langConfig: configs)
     }
@@ -51,7 +51,7 @@ final class ElepayModule: NSObject {
     @objc
     func handleOpenUrlString(_ urlString: String) -> Bool {
         guard let url = URL(string: urlString) else { return false }
-        return ElePay.handleOpenURL(url)
+        return Elepay.handleOpenURL(url)
     }
 
     @objc
@@ -67,20 +67,38 @@ final class ElepayModule: NSObject {
         }
     }
 
-    private func performChangingLanguage(langConfig: [String: String]) {
-        let langCodeStr = langConfig["languageKey"] ?? ""
-        if let langCode = retrieveLanguageCode(from: langCodeStr) {
-            ElePayLocalization.shared.switchLanguage(code: langCode)
+    @objc
+    func handleSource(
+        payload: String,
+        resultHandler callback: @escaping RCTResponseSenderBlock
+    ) {
+        DispatchQueue.main.async { [weak self] in
+            self?.processSource(payload: payload, resultHandler: callback)
         }
     }
 
-    private func retrieveLanguageCode(from langStr: String) -> ElePayLanguageCode? {
-        let ret: ElePayLanguageCode?
+    @objc
+    func checkout(payload: String, resultHandler callback: @escaping RCTResponseSenderBlock) {
+        DispatchQueue.main.async { [weak self] in
+            self?.processCheckout(payload: payload, resultHandler: callback)
+        }
+    }
+
+    private func performChangingLanguage(langConfig: [String: String]) {
+        let langCodeStr = langConfig["languageKey"] ?? ""
+        if let langCode = retrieveLanguageCode(from: langCodeStr) {
+            ElepayLocalization.shared.switchLanguage(code: langCode)
+        }
+    }
+
+    private func retrieveLanguageCode(from langStr: String) -> ElepayLanguageCode? {
+        let ret: ElepayLanguageCode?
         switch (langStr.lowercased()) {
-            case "english": ret = .en
-            case "simplifiedchinise": ret = .cn
-            case "traditionalchinese": ret = .tw
-            case "japanese": ret = .ja
+            case "english": ret = .english
+            case "simplifiedchinise": ret = .simplifiedChinese
+            case "traditionalchinese": ret = .traditionalChinese
+            case "japanese": ret = .japanese
+            case "system": ret = .system
             default: ret = nil
         }
         return ret
@@ -88,41 +106,62 @@ final class ElepayModule: NSObject {
 
     private func processPayment(payload: String, resultHandler: @escaping RCTResponseSenderBlock) {
         let sender = UIApplication.shared.keyWindow?.rootViewController ?? UIViewController()
-        _ = ElePay.handlePayment(chargeJSON: payload, viewController: sender) { result in
-            switch result {
-            case .succeeded(let paymentId):
-                let res = RnElepayResult(state: "succeeded", paymentId: paymentId)
-                resultHandler([res.asNSDictionary, NSNull()])
-            case .cancelled(let paymentId):
-                let res = RnElepayResult(state: "cancelled", paymentId: paymentId)
-                resultHandler([res.asNSDictionary, NSNull()])
-            case .failed(let paymentId, let error):
-                let err: RnElepayError
-                switch error {
-                case .alreadyMakingPayment(_):
-                    err = RnElepayError(code: "", reason: "Already making payment", message: "")
-                case .invalidPayload(let errorCode, let message):
-                    err = RnElepayError(code: errorCode, reason: "Invalid payload", message: message)
-                case .paymentFailure(let errorCode, let message):
-                    err = RnElepayError(code: errorCode, reason: "Payment failure", message: message)
-                case .paymentMethodNotInitialized(let errorCode, let message):
-                    err = RnElepayError(code: errorCode, reason: "Payment method not initialized", message: message)
-                case .serverError(let errorCode, let message):
-                    err = RnElepayError(code: errorCode, reason: "Server error", message: message)
-                case .systemError(let errorCode, let message):
-                    err = RnElepayError(code: errorCode, reason: "System error", message: message)
-                case .unsupportedPaymentMethod(let errorCode, let paymentMethod):
-                    err = RnElepayError(code: errorCode, reason: "Unsupported payment method", message: paymentMethod)
-                @unknown default:
-                    err = RnElepayError(code: "-1", reason: "Undefined reason", message: "Unknonw error")
-                    break
-                }
+        _ = Elepay.handlePayment(chargeJSON: payload, viewController: sender) { [weak self] result in
+            self?.processElepayResult(result, resultHandler: resultHandler)
+        }
+    }
 
-                let res = RnElepayResult(state: "failed", paymentId: paymentId)
-                resultHandler([res.asNSDictionary, err.asNSDictionary])
+    private func processSource(payload: String, resultHandler: @escaping RCTResponseSenderBlock) {
+        let sender = UIApplication.shared.keyWindow?.rootViewController ?? UIViewController()
+        _ = Elepay.handleSource(sourceJSON: payload, viewController: sender) { [weak self] result in
+            self?.processElepayResult(result, resultHandler: resultHandler)
+        }
+    }
+
+    private func processCheckout(payload: String, resultHandler: @escaping RCTResponseSenderBlock) {
+        let sender = UIApplication.shared.keyWindow?.rootViewController ?? UIViewController()
+        _ = Elepay.checkout(checkoutJSONString: payload, from: sender) { [weak self] result in
+            self?.processElepayResult(result, resultHandler: resultHandler)
+        }
+    }
+
+    private func processElepayResult(
+        _ result: ElepayResult,
+         resultHandler: @escaping RCTResponseSenderBlock
+    ) {
+        switch result {
+        case .succeeded(let paymentId):
+            let res = RnElepayResult(state: "succeeded", paymentId: paymentId)
+            resultHandler([res.asNSDictionary, NSNull()])
+        case .cancelled(let paymentId):
+            let res = RnElepayResult(state: "cancelled", paymentId: paymentId)
+            resultHandler([res.asNSDictionary, NSNull()])
+        case .failed(let paymentId, let error):
+            let err: RnElepayError
+            switch error {
+            case .alreadyMakingPayment(_):
+                err = RnElepayError(code: "", reason: "Already making payment", message: "")
+            case .invalidPayload(let errorCode, let message):
+                err = RnElepayError(code: errorCode, reason: "Invalid payload", message: message)
+            case .paymentFailure(let errorCode, let message):
+                err = RnElepayError(code: errorCode, reason: "Payment failure", message: message)
+            case .paymentMethodNotInitialized(let errorCode, let message):
+                err = RnElepayError(code: errorCode, reason: "Payment method not initialized", message: message)
+            case .serverError(let errorCode, let message):
+                err = RnElepayError(code: errorCode, reason: "Server error", message: message)
+            case .systemError(let errorCode, let message):
+                err = RnElepayError(code: errorCode, reason: "System error", message: message)
+            case .unsupportedPaymentMethod(let errorCode, let paymentMethod):
+                err = RnElepayError(code: errorCode, reason: "Unsupported payment method", message: paymentMethod)
             @unknown default:
+                err = RnElepayError(code: "-1", reason: "Undefined reason", message: "Unknonw error")
                 break
             }
+
+            let res = RnElepayResult(state: "failed", paymentId: paymentId)
+            resultHandler([res.asNSDictionary, err.asNSDictionary])
+        @unknown default:
+            break
         }
     }
 }

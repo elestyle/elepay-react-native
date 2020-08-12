@@ -13,13 +13,13 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   # s.license    = { :type => "MIT", :file => "FILE_LICENSE" }
   s.authors      = { "elestyle, Inc." => "info@elestyle.jp" }
-  s.platforms    = { :ios => "9.0" }
+  s.platforms    = { :ios => "10.0" }
   s.source       = { :git => "https://github.com/elestyle/elepay-react-native", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,swift}"
   s.requires_arc = true
 
   s.dependency "React"
-  s.dependency "ElePay", "1.7.9"
+  s.dependency "ElepaySDK", "2.1.1"
 end
 
