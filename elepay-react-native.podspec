@@ -7,11 +7,10 @@ Pod::Spec.new do |s|
   s.version      = package["version"]
   s.summary      = package["description"]
   s.description  = <<-DESC
-                  react-native-rn-elepay
+                  A React Native module for elepay mobile SDK.
                    DESC
   s.homepage     = "https://elepay.io"
   s.license      = "MIT"
-  # s.license    = { :type => "MIT", :file => "FILE_LICENSE" }
   s.authors      = { "elestyle, Inc." => "info@elestyle.jp" }
   s.platforms    = { :ios => "10.0" }
   s.source       = { :git => "https://github.com/elestyle/elepay-react-native", :tag => "#{s.version}" }
@@ -20,6 +19,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency "React"
-  s.dependency "ElepaySDK", "2.1.1"
+  s.dependency "ElepaySDK", "2.1.3"
 end
-
