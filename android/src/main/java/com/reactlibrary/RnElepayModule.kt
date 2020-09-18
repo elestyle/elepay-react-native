@@ -33,7 +33,7 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
                 configs.getString("googlePayEnvironment")?.let {
                     if (it.toLowerCase().contains("test")) GooglePayEnvironment.TEST
                     else GooglePayEnvironment.PRODUCTION
-                } ?: null
+                }
             } catch (e: Exception) {
                 null
             }
