@@ -17,17 +17,15 @@ Some payment methods may require individual dependency setup. Please refer to th
 ## Setup
 
 ### iOS
-> Note:
-> * CocoaPods is required.
-> * The native iOS SDK requires the deployment target OS version to be minimus as **10.0**. Make sure both your iOS projects and your Podfile has the correct setting.
+> Requirements:
+> * CocoaPods 1.10.0 and above.
+> * iOS deployment target version 10.0 and above.
+>
+> Make sure both your iOS projects and your Podfile has the correct settings.
 
 * Go to the ios folder of your project.
 ```bash
 cd ios
-```
-* Add the following line to the `Podfile` if it does not appear.
-```ruby
-use_frameworks!
 ```
 * Then install all pods.
 ```base
@@ -36,8 +34,8 @@ pod install
 
 ### Android
 
-> Note:
-> * The native Android SDK requires `minSdkVersion` to be **21**. If you see build errors relative to the `minSdkVersion`, please check your Android project settings.
+> Requirements:
+> * `minSdkVersion` 21.
 
 elepay Android SDK hosted in a separated github repository.
 Add the following code to your app project's `repositories` block of the root `build.gradle` file.
@@ -58,14 +56,16 @@ import { NativeModules } from 'react-native'
 //
 // The parameter object could contain the following fields:
 // "publicKey": String value. Required. Can be retrieved from your elepay account's dashboard page.
-// "hostUrl": String value. Optional. Indicates the server url that you want to customised. Omitted to use elepay's server.
-// "googlePayEnvironment": String value. "test" or "production". Used to setup Google Pay, can be omitted if Google Pay is not used.
-// "languageKey": String value. Availabile values are "English", "SimplifiedChinise", "TraditionalChinese" and "Japanese". Could be omitted. elepay SDK will try to use the system language settings, and fallback to "English" if no supported languages are found.
+// "hostUrl": Optional string value. Indicates the server url that you want to customised. If omitted, elepay's server will be used.
+// "googlePayEnvironment": Optional string value. "test" or "production". Used to setup Google Pay, can be omitted if Google Pay is not used.
+// "languageKey": Optional string value. Availabile values are "English", "SimplifiedChinise", "TraditionalChinese" and "Japanese". If omitted, elepay SDK will try to use the system language settings, and fallback to "English" if no supported languages are found.
+// "theme": Optional string value. Only available on Android platform. Possible values are "light" and "dark". Other values will be ignored. If omitted, elepay SDK will follow system's theme setting (on API 29 and above).
 NativeModules.Elepay.initElepay({
   publicKey: "the public key string",
   apiUrl: "a customised url string, can be omitted",
-  googlePayEnvironment: "either 'test' or 'product' if presented. Can be omitted if Google Pay is not used",
-  languageKey: "one of 'English', 'SimplifiedChinise', 'TraditionalChinese', 'Janapese'. Can be omitted."
+  googlePayEnvironment: "test", // or 'product'. Can be omitted if Google Pay is not used
+  languageKey: "English", // or 'SimplifiedChinise', 'TraditionalChinese', 'Janapese'. Can be omitted.
+  theme: "light", // or 'dark'.
 })
 
 // Change localization of elepay UI component.
@@ -76,12 +76,22 @@ NativeModules.Elepay.initElepay({
 //  * Traditional Chinese
 //  * Japanese
 //
-// Note: this method should be called **AFTER** `initElepay` and before `handlePaymentWithPayload`.
-// Any invoking before `initELepay` won't work. But this method only requires being called once.
+// Note: this method should be called **AFTER** `initElepay` and **BEFORE** any kind of payment processing(e.g. `handlePaymentWithPayload`).
 NativeModules.Elepay.changeLanguage({
-    languageKey: 'Japanese' // or 'English', 'SimplifiedChinise', 'TraditionalChinese'
+  languageKey: 'Japanese' // or 'English', 'SimplifiedChinise', 'TraditionalChinese'
 });
 
+// Change theme of UI components.
+// ** Currently Android only **
+//
+// Valid value: "light", "dark". Any other value will be ignored and follow the system's theme(on Android Q and above).
+//
+// Note: this method should be called **AFTER** `initElepay` and **BEFORE** any kind of payment processing(e.g. `handlePaymentWithPayload`).
+if (Platform.OS === 'android') {
+  NativeModules.Elepay.changeTheme({
+    theme: 'light' // or 'dark'
+  });
+}
 
 // Process payment after charging.
 //
@@ -93,7 +103,8 @@ NativeModules.Elepay.changeLanguage({
 //   "state": "succeeded",
 //   "paymentId": "the payment id"
 // }
-// "state" indicates the current payment's result, available values are: "succeeded"/"cancelled"/"failed"
+// "state" indicates the current payment's result, possible values are: "succeeded"/"cancelled"/"failed"
+// Note that the payments is processed asynchronousely, please reply on the server API's webhook for the payment confirmation.
 //
 // "error" is available when "state" is "failed". The structure is:
 // {
@@ -108,6 +119,63 @@ NativeModules.Elepay.handlePaymentWithPayload(
     console.log(result)
     console.log(error)
   })
+
+// Process source data.
+//
+// "payload" is a "stringified" JSON object that the creating source API returned. For API details, please refer to https://developer.elepay.io/reference
+//
+// The result is passed through the callback.
+// "result" is a JSON object in a structure of:
+// {
+//   "state": "succeeded",
+//   "paymentId": "the payment id"
+// }
+// "state" indicates the current payment's result, possible values are: "succeeded"/"cancelled"/"failed".
+// Note that the payments is processed asynchronousely, please reply on the server API's webhook for the payment confirmation.
+//
+// "error" is available when "state" is "failed". The structure is:
+// {
+//   "code": "error code"
+//   "reasose": "the reason of the error"
+//   "message": "the detail message"
+// }
+NatvieModules.Elepay.handleSourceWithPayload(
+  payload,
+  (result, error) => {
+    console.log('source result: ')
+    console.log(result)
+    console.log(error)
+  }
+)
+
+// Process EasyCheckout.
+// For more about EasyCheckout: https://developer.elepay.io/docs/easycheckout
+//
+// "payload" is a "stringified" JSON object that the checkout API returned. For API details, please refer to https://developer.elepay.io/reference
+//
+// The result is passed through the callback.
+// "result" is a JSON object in a structure of:
+// {
+//   "state": "succeeded",
+//   "paymentId": "the payment id"
+// }
+// "state" indicates the current payment's result, possible values are: "succeeded"/"cancelled"/"failed".
+// Note that the payments is processed asynchronousely, please reply on the server API's webhook for the payment confirmation.
+//
+// "error" is available when "state" is "failed". The structure is:
+// {
+//   "code": "error code"
+//   "reasose": "the reason of the error"
+//   "message": "the detail message"
+// }
+NatvieModules.Elepay.checkoutWithPayload(
+  payload,
+  (result, error) => {
+    console.log('source result: ')
+    console.log(result)
+    console.log(error)
+  }
+)
 ```
 
 ## Callback
@@ -158,3 +226,5 @@ Url schemes configurations(defined in `AndroidManifest.xml`) and gradle intergar
 - `elepay-react-native` does not specify a Swift version and none of the targets (`Your Project`) integrating it have the `SWIFT_VERSION` attribute set. Please contact the author or set the `SWIFT_VERSION` attribute in at least one of the targets that integrate this pod.
 ```
 The reason of the error is that the default project structure that craeted by the react-native-cli does not set the swift version for iOS platform.
+
+2. On Android platform, when setting elepay's theme, please note that elepay SDK changes its UI theme by setting its Activity's night mode configutaion. If the Activity that invokes the elepay's UI Activity has different night mode, a "uiMode" configuation change may be triggered by the system. That may cause the caller Activity recreated. To avoid the recreation, set `android:configChanges="uiMode"` to the caller Activiy in `AndroidManifest.xml`. See the [documentation](https://developer.elepay.io/docs/android-sdk#ui-%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA) of elepay SDK for detail.

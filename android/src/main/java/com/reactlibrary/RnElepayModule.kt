@@ -12,8 +12,10 @@ import jp.elestyle.androidapp.elepay.ElepayConfiguration
 import jp.elestyle.androidapp.elepay.ElepayError
 import jp.elestyle.androidapp.elepay.ElepayResult
 import jp.elestyle.androidapp.elepay.ElepayResultListener
+import jp.elestyle.androidapp.elepay.ElepayTheme
 import jp.elestyle.androidapp.elepay.GooglePayEnvironment
 import jp.elestyle.androidapp.elepay.utils.locale.LanguageKey
+import java.util.Locale
 import org.json.JSONObject
 
 class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJavaModule(reactContext) {
@@ -25,9 +27,11 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
         val pKey = if (configs.hasKey("publicKey")) {
             try { configs.getString("publicKey") ?: "" } catch (e: Exception) { "" }
         } else ""
+
         val apiUrl = if (configs.hasKey("apiUrl")) {
             try { configs.getString("apiUrl") ?: "" } catch (e: Exception) { "" }
         } else ""
+
         val googlePayEnv = if (configs.hasKey("googlePayEnvironment")) {
             try {
                 configs.getString("googlePayEnvironment")?.let {
@@ -38,11 +42,18 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
                 null
             }
         } else null
+
         val languageKeyStr = if (configs.hasKey("languageKey")) {
             try { configs.getString("languageKey") ?: "" } catch (e: Exception) { "" }
         } else ""
         val languageKey = retrieveLanguageKey(languageKeyStr)
-        Elepay.setup(ElepayConfiguration(pKey, apiUrl, googlePayEnv, languageKey))
+
+        val themeName = if (configs.hasKey("theme")) {
+            try { configs.getString("theme") ?: "" } catch (e: Exception) { "" }
+        } else ""
+        val theme = retrieveTheme(themeName)
+
+        Elepay.setup(ElepayConfiguration(pKey, apiUrl, googlePayEnv, languageKey, theme))
     }
 
     @ReactMethod
@@ -52,6 +63,15 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
         } else ""
         val languageKey = retrieveLanguageKey(languageKeyStr)
         Elepay.changeLanguageKey(languageKey)
+    }
+
+    @ReactMethod
+    fun changeTheme(themeMap: ReadableMap) {
+        val themeName = if (themeMap.hasKey("theme")) {
+            try { themeMap.getString("theme") ?: "" } catch (e: Exception) { "" }
+        } else ""
+        val theme = retrieveTheme(themeName)
+        Elepay.changeTheme(theme)
     }
 
     @ReactMethod
@@ -130,5 +150,12 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
             "japanese" -> LanguageKey.Japanese
             "system" -> LanguageKey.System
             else -> LanguageKey.System
+        }
+
+    private fun retrieveTheme(themeName: String): ElepayTheme =
+        when(themeName.toLowerCase(Locale.ROOT)) {
+            "light" -> ElepayTheme.Light
+            "dark" -> ElepayTheme.Dark
+            else -> ElepayTheme.System
         }
 }
