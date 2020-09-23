@@ -49,6 +49,11 @@ final class ElepayModule: NSObject {
     }
 
     @objc
+    func changeTheme(_ themeConfig: Dictionary<String, String>) {
+        // Currently not supported yet.
+    }
+
+    @objc
     func handleOpenUrlString(_ urlString: String) -> Bool {
         guard let url = URL(string: urlString) else { return false }
         return Elepay.handleOpenURL(url)
