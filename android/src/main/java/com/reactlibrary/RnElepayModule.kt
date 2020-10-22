@@ -109,6 +109,9 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
 
             is ElepayResult.Failed -> {
                 val rnElepayError = when (val error = result.error) {
+                    is ElepayError.SDKNotSetup ->
+                        RnElepayError(error.errorCode, "SDK not setup", error.message)
+
                     is ElepayError.UnsupportedPaymentMethod ->
                         RnElepayError("", "Unsupported payment method", error.paymentMethod)
 
