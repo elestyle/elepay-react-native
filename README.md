@@ -204,7 +204,7 @@ First, in your app's js source, listen to `Linking` module's url event and pass 
 ### iOS
 
 Your app needs to be configured with URL scheme and `LSApplicationQueriesSchemes`.
-For detail configurations, please refer to the [payment method settings overview page](https://developer.elepay.io/docs/%E6%A6%82%E8%A6%81)
+For detail configurations, please refer to the [payment method settings overview page](https://developer.elepay.io/docs/summary)
 
 Then in your app's `AppDeletage.m`, add the following code to let React Native handles the callback.
 ```Objective-C
@@ -215,7 +215,7 @@ Then in your app's `AppDeletage.m`, add the following code to let React Native h
 
 ### Android
 
-Url schemes configurations(defined in `AndroidManifest.xml`) and gradle intergartions(defined in `build.gradle`) may be required. Please refer to the [payment method settings overview page](https://developer.elepay.io/docs/%E6%A6%82%E8%A6%81) for detail.
+Url schemes configurations(defined in `AndroidManifest.xml`) and gradle intergartions(defined in `build.gradle`) may be required. Please refer to the [payment method settings overview page](https://developer.elepay.io/docs/summary) for detail.
 
 ## Miscellaneous
 
