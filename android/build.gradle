@@ -10,10 +10,10 @@
 //   original location:
 //   - https://github.com/facebook/react-native/blob/0.58-stable/local-cli/templates/HelloWorld/android/app/build.gradle
 
-def DEFAULT_COMPILE_SDK_VERSION = 29
-def DEFAULT_BUILD_TOOLS_VERSION = '29.0.2'
+def DEFAULT_COMPILE_SDK_VERSION = 30
+def DEFAULT_BUILD_TOOLS_VERSION = '30.0.3'
 def DEFAULT_MIN_SDK_VERSION = 21
-def DEFAULT_TARGET_SDK_VERSION = 29
+def DEFAULT_TARGET_SDK_VERSION = 30
 
 def safeExtGet(prop, fallback) {
     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
@@ -33,11 +33,11 @@ buildscript {
             jcenter()
         }
         dependencies {
-            classpath 'com.android.tools.build:gradle:3.6.3'
+            classpath 'com.android.tools.build:gradle:4.2.1'
         }
     }
 
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.5.10'
     repositories {
         mavenCentral()
         maven {
@@ -100,7 +100,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'jp.elestyle.androidapp:elepay:2.2.0'
+    implementation 'jp.elestyle.androidapp:elepay:2.4.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
