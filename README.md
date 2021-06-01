@@ -19,7 +19,7 @@ Some payment methods may require individual dependency setup. Please refer to th
 ### iOS
 > Requirements:
 > * CocoaPods 1.10.0 and above.
-> * iOS deployment target version 10.0 and above.
+> * iOS deployment target version 11.0 and above.
 >
 > Make sure both your iOS projects and your Podfile has the correct settings.
 
