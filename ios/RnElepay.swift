@@ -50,7 +50,7 @@ final class ElepayModule: NSObject {
 
     @objc
     func changeTheme(_ themeConfig: Dictionary<String, String>) {
-        // Currently not supported yet.
+        performChangingTheme(themeConfig: themeConfig)
     }
 
     @objc
@@ -107,6 +107,24 @@ final class ElepayModule: NSObject {
             default: ret = nil
         }
         return ret
+    }
+
+    private func performChangingTheme(themeConfig: [String: String]) {
+        let themeName = themeConfig["theme"] as? String ?? ""
+        if #available(iOS 13, *) {
+            Elepay.userInterfaceStyle = retrieveUserInterface(from: themeName)
+        } else {
+            print("theme is only supported on iOS 13 and above.")
+        }
+    }
+
+    @available(iOS 12.0, *)
+    private func retrieveUserInterface(from themeName: String) -> UIUserInterfaceStyle {
+        switch (themeName.lowercased()) {
+        case "light": return .light
+        case "dark": return .dark
+        default: return .unspecified
+        }
     }
 
     private func processPayment(payload: String, resultHandler: @escaping RCTResponseSenderBlock) {
