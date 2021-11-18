@@ -59,7 +59,7 @@ import { NativeModules } from 'react-native'
 // "hostUrl": Optional string value. Indicates the server url that you want to customised. If omitted, elepay's server will be used.
 // "googlePayEnvironment": Optional string value. "test" or "production". Used to setup Google Pay, can be omitted if Google Pay is not used.
 // "languageKey": Optional string value. Availabile values are "English", "SimplifiedChinise", "TraditionalChinese" and "Japanese". If omitted, elepay SDK will try to use the system language settings, and fallback to "English" if no supported languages are found.
-// "theme": Optional string value. Only available on Android platform. Possible values are "light" and "dark". Other values will be ignored. If omitted, elepay SDK will follow system's theme setting (on API 29 and above).
+// "theme": Optional string value. Only available on and above Android Q(API 29) and iOS 13. Possible values are "light" and "dark". Other values will be ignored. If omitted, elepay SDK will follow system's theme setting.
 NativeModules.Elepay.initElepay({
   publicKey: "the public key string",
   apiUrl: "a customised url string, can be omitted",
@@ -82,9 +82,8 @@ NativeModules.Elepay.changeLanguage({
 });
 
 // Change theme of UI components.
-// ** Currently Android only **
 //
-// Valid value: "light", "dark". Any other value will be ignored and follow the system's theme(on Android Q and above).
+// Valid value: "light", "dark". Any other value will be ignored and follow the system's theme(on Android Q/iOS 13 and above).
 //
 // Note: this method should be called **AFTER** `initElepay` and **BEFORE** any kind of payment processing(e.g. `handlePaymentWithPayload`).
 if (Platform.OS === 'android') {

@@ -41,6 +41,7 @@ final class ElepayModule: NSObject {
         Elepay.initApp(key: publicKey, apiURLString: apiUrl)
 
         performChangingLanguage(langConfig: configs)
+        performChangingTheme(themeConfig: configs)
     }
 
     @objc
