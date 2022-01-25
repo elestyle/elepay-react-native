@@ -89,7 +89,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'jp.elestyle.androidapp:elepay:2.6.0'
+    implementation 'jp.elestyle.androidapp:elepay:2.6.1'
 }
 
 def configureReactNativePom(def pom) {
