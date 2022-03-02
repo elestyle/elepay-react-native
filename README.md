@@ -2,8 +2,6 @@
 
 React Native wrapper of elepay SDK.
 
-> NOTE: elepay SDK requires [React Native](https://reactnative.dev) version **0.61.5** and above.
-
 ## Install
 ```
 yarn add elepay-react-native --save
