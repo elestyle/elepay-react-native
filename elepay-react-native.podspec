@@ -19,5 +19,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency "React"
-  s.dependency "ElepaySDK", "3.4.1"
+  s.dependency "ElepaySDK", "3.5.0"
 end
