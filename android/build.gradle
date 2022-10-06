@@ -11,11 +11,11 @@ buildscript {
             mavenCentral()
         }
         dependencies {
-            classpath 'com.android.tools.build:gradle:4.2.2'
+            classpath 'com.android.tools.build:gradle:7.3.0'
         }
     }
 
-    ext.kotlin_version = '1.5.31'
+    ext.kotlin_version = '1.7.10'
     repositories {
         mavenCentral()
         maven {
@@ -29,24 +29,15 @@ buildscript {
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'maven'
-apply plugin: "kotlin-android"
-// apply plugin: "kotlin-android-extensions"
+plugins {
+    id("com.android.library")
+    id("kotlin-android")
+    id("maven-publish")
+}
 
-// based on:
-//
-// * https://github.com/facebook/react-native/blob/0.60-stable/template/android/build.gradle
-//   original location:
-//   - https://github.com/facebook/react-native/blob/0.58-stable/local-cli/templates/HelloWorld/android/build.gradle
-//
-// * https://github.com/facebook/react-native/blob/0.60-stable/template/android/app/build.gradle
-//   original location:
-//   - https://github.com/facebook/react-native/blob/0.58-stable/local-cli/templates/HelloWorld/android/app/build.gradle
-
-def DEFAULT_COMPILE_SDK_VERSION = 31
-def DEFAULT_MIN_SDK_VERSION = 21
-def DEFAULT_TARGET_SDK_VERSION = 31
+def DEFAULT_COMPILE_SDK_VERSION = 33
+def DEFAULT_MIN_SDK_VERSION = 23
+def DEFAULT_TARGET_SDK_VERSION = 33
 
 def safeExtGet(prop, fallback) {
     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
@@ -54,7 +45,7 @@ def safeExtGet(prop, fallback) {
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', DEFAULT_COMPILE_SDK_VERSION)
-    // buildToolsVersion safeExtGet('buildToolsVersion', DEFAULT_BUILD_TOOLS_VERSION)
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -92,54 +83,12 @@ dependencies {
     // React Native.
     // However, it'd better to upgrade once for future release.
     implementation "androidx.appcompat:appcompat:1.3.1"
-    implementation ('jp.elestyle.androidapp:elepay:2.9.0') {
+    implementation ('jp.elestyle.androidapp:elepay:3.0.0') {
         exclude group: 'androidx.appcompat', module: 'appcompat'
     }
 }
 
-def configureReactNativePom(def pom) {
-    def packageJson = new groovy.json.JsonSlurper().parseText(file('../package.json').text)
-
-    pom.project {
-        name packageJson.title
-        artifactId packageJson.name
-        version = packageJson.version
-        group = "com.reactlibrary"
-        description packageJson.description
-        url packageJson.repository.baseUrl
-
-        licenses {
-            license {
-                name packageJson.license
-                url packageJson.repository.baseUrl + '/blob/master/' + packageJson.licenseFilename
-                distribution 'repo'
-            }
-        }
-
-        developers {
-            developer {
-                id packageJson.author.username
-                name packageJson.author.name
-            }
-        }
-    }
-}
-
 afterEvaluate { project ->
-    // some Gradle build hooks ref:
-    // https://www.oreilly.com/library/view/gradle-beyond-the/9781449373801/ch03.html
-    task androidJavadoc(type: Javadoc) {
-        source = android.sourceSets.main.java.srcDirs
-        classpath += files(android.bootClasspath)
-        classpath += files(project.getConfigurations().getByName('compile').asList())
-        include '**/*.java'
-    }
-
-    task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
-        classifier = 'javadoc'
-        from androidJavadoc.destinationDir
-    }
-
     task androidSourcesJar(type: Jar) {
         classifier = 'sources'
         from android.sourceSets.main.java.srcDirs
@@ -157,15 +106,43 @@ afterEvaluate { project ->
 
     artifacts {
         archives androidSourcesJar
-        archives androidJavadocJar
     }
 
-    task installArchives(type: Upload) {
-        configuration = configurations.archives
-        repositories.mavenDeployer {
-            // Deploy to react-native-event-bridge/maven, ready to publish to npm
-            repository url: "file://${projectDir}/../android/maven"
-            configureReactNativePom pom
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                def packageJson = new groovy.json.JsonSlurper().parseText(file('../package.json').text)
+
+                pom {
+                    name = packageJson.title
+                    artifactId = packageJson.name
+                    version = packageJson.version
+                    group = "com.reactlibrary"
+                    description packageJson.description
+                    url = packageJson.repository.url
+
+                    licenses {
+                        license {
+                            name = packageJson.license
+                            url = packageJson.repository.baseUrl + '/blob/master/' + packageJson.licenseFilename
+                            distribution = 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = packageJson.author.username
+                            name = packageJson.author.name
+                        }
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                url "file://${projectDir}/../android/maven"
+            }
         }
     }
 }
