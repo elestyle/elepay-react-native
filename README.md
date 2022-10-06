@@ -17,7 +17,7 @@ Some payment methods may require individual dependency setup. Please refer to th
 ### iOS
 > Requirements:
 > * CocoaPods 1.10.0 and above.
-> * iOS deployment target version 11.0 and above.
+> * iOS deployment target version 12.0 and above.
 >
 > Make sure both your iOS projects and your Podfile has the correct settings.
 
@@ -33,7 +33,7 @@ pod install
 ### Android
 
 > Requirements:
-> * `minSdkVersion` 21.
+> * `minSdkVersion` 23.
 
 elepay Android SDK hosted in a separated github repository.
 Add the following code to your app project's `repositories` block of the root `build.gradle` file.
