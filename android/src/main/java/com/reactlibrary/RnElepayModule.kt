@@ -148,7 +148,7 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
     private fun retrieveLanguageKey(languageKeyStr: String): LanguageKey =
         when (languageKeyStr.toLowerCase()) {
             "english" -> LanguageKey.English
-            "simplifiedchinise" -> LanguageKey.SimplifiedChinise
+            "simplifiedchinese" -> LanguageKey.SimplifiedChinese
             "traditionalchinese" -> LanguageKey.TraditionalChinese
             "japanese" -> LanguageKey.Japanese
             "system" -> LanguageKey.System
