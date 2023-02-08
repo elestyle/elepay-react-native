@@ -38,20 +38,28 @@ final class ElepayModule: NSObject {
     func initElepay(_ configs: Dictionary<String, String>) {
         let publicKey = configs["publicKey"] ?? ""
         let apiUrl = configs["apiUrl"] ?? ""
-        Elepay.initApp(key: publicKey, apiURLString: apiUrl)
+        // React-Native always invoke the native module method in a background thread.
+        // Manually call through main thread to work around it.
+        DispatchQueue.main.async { [weak self] in
+            Elepay.initApp(key: publicKey, apiURLString: apiUrl)
 
-        performChangingLanguage(langConfig: configs)
-        performChangingTheme(themeConfig: configs)
+            self?.performChangingLanguage(langConfig: configs)
+            self?.performChangingTheme(themeConfig: configs)
+        }
     }
 
     @objc
     func changeLanguage(_ langConfig: Dictionary<String, String>) {
-        performChangingLanguage(langConfig: langConfig)
+        DispatchQueue.main.async { [weak self] in
+            self?.performChangingLanguage(langConfig: langConfig)
+        }
     }
 
     @objc
     func changeTheme(_ themeConfig: Dictionary<String, String>) {
-        performChangingTheme(themeConfig: themeConfig)
+        DispatchQueue.main.async { [weak self] in
+            self?.performChangingTheme(themeConfig: themeConfig)
+        }
     }
 
     @objc
