@@ -1,20 +1,16 @@
 PODS:
-  - ElePay (1.7.1):
-    - Stripe (= 17.0.2)
-  - Stripe (17.0.2)
+  - ElepaySDK (2.3.6)
 
 DEPENDENCIES:
-  - ElePay
+  - ElepaySDK
 
 SPEC REPOS:
   trunk:
-    - ElePay
-    - Stripe
+    - ElepaySDK
 
 SPEC CHECKSUMS:
-  ElePay: f5948fc8935e6067c4f0a8db28bd93077d6343e9
-  Stripe: 6c9ab10f087ca76c3cd7311462e383434921bdf8
+  ElepaySDK: 96823cac619178830fa900ce967f041ed62832ee
 
-PODFILE CHECKSUM: b8808f2218e33a70c7e5431f68ef004ce85d88b6
+PODFILE CHECKSUM: 4765dd8623c6f6ba5621e7f71a662bd1c5b7ff5e
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.16.2
