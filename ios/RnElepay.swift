@@ -63,9 +63,9 @@ final class ElepayModule: NSObject {
     }
 
     @objc
-    func handleOpenUrlString(_ urlString: String) -> Bool {
-        guard let url = URL(string: urlString) else { return false }
-        return Elepay.handleOpenURL(url)
+    func handleOpenUrlString(_ urlString: String) -> NSNumber {
+        guard let url = URL(string: urlString) else { return NSNumber(value: false) }
+        return NSNumber(value: Elepay.handleOpenURL(url))
     }
 
     @objc

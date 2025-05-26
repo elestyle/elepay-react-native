@@ -537,6 +537,7 @@
 		};
 		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FC4AFB864D90E8D82BBC55A4 /* Pods-RnElepay.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				HEADER_SEARCH_PATHS = (
@@ -558,6 +559,7 @@
 		};
 		58B511F11A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 882B34819DACE6154A2EAD11 /* Pods-RnElepay.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				HEADER_SEARCH_PATHS = (
