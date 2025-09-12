@@ -7,3 +7,5 @@ env
 npm-debug.log
 webpack.*
 ios/Pods/
+
+android/build/

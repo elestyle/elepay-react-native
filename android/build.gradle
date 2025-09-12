@@ -1,34 +1,3 @@
-// android/build.gradle
-
-buildscript {
-    // The Android Gradle plugin is only required when opening the android folder stand-alone.
-    // This avoids unnecessary downloads and potential conflicts when the library is included as a
-    // module dependency in an application project.
-    // ref: https://docs.gradle.org/current/userguide/tutorial_using_tasks.html#sec:build_script_external_dependencies
-    if (project == rootProject) {
-        repositories {
-            google()
-            mavenCentral()
-        }
-        dependencies {
-            classpath 'com.android.tools.build:gradle:7.3.0'
-        }
-    }
-
-    ext.kotlin_version = '1.7.10'
-    repositories {
-        mavenCentral()
-        maven {
-            url "https://elestyle.github.io/elepay-android/repository"
-        }
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
 plugins {
     id("com.android.library")
     id("kotlin-android")
@@ -44,15 +13,16 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', DEFAULT_COMPILE_SDK_VERSION)
+    namespace "io.elepay.reactnative"
+    compileSdkVersion safeExtGet("compileSdkVersion", DEFAULT_COMPILE_SDK_VERSION)
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', DEFAULT_MIN_SDK_VERSION)
-        targetSdkVersion safeExtGet('targetSdkVersion', DEFAULT_TARGET_SDK_VERSION)
+        minSdkVersion safeExtGet("minSdkVersion", DEFAULT_MIN_SDK_VERSION)
+        targetSdkVersion safeExtGet("targetSdkVersion", DEFAULT_TARGET_SDK_VERSION)
         versionCode 1
         versionName "1.0"
     }
@@ -62,87 +32,23 @@ android {
 }
 
 repositories {
-    // ref: https://www.baeldung.com/maven-local-repository
-    mavenLocal()
     maven {
-        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
         url "$rootDir/../node_modules/react-native/android"
     }
     maven {
-        // Android JSC is installed from npm
         url "$rootDir/../node_modules/jsc-android/dist"
+    }
+    maven {
+       url "https://elestyle.github.io/elepay-android/repository"
     }
     google()
     jcenter()
 }
 
 dependencies {
-    //noinspection GradleDynamicVersion
-    implementation 'com.facebook.react:react-native:+'  // From node_modules
-    // OK, for sure, 1.3.1 is old. But it's the only one that works with the latest version of
-    // React Native.
-    // However, it'd better to upgrade once for future release.
+    implementation "com.facebook.react:react-native:+"
     implementation "androidx.appcompat:appcompat:1.3.1"
-    implementation ('jp.elestyle.androidapp:elepay:3.4.0') {
-        exclude group: 'androidx.appcompat', module: 'appcompat'
-    }
-}
-
-afterEvaluate { project ->
-    task androidSourcesJar(type: Jar) {
-        classifier = 'sources'
-        from android.sourceSets.main.java.srcDirs
-        include '**/*.java'
-    }
-
-    android.libraryVariants.all { variant ->
-        def name = variant.name.capitalize()
-        def javaCompileTask = variant.javaCompileProvider.get()
-
-        task "jar${name}"(type: Jar, dependsOn: javaCompileTask) {
-            from javaCompileTask.destinationDir
-        }
-    }
-
-    artifacts {
-        archives androidSourcesJar
-    }
-
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                def packageJson = new groovy.json.JsonSlurper().parseText(file('../package.json').text)
-
-                pom {
-                    name = packageJson.title
-                    artifactId = packageJson.name
-                    version = packageJson.version
-                    group = "com.reactlibrary"
-                    description packageJson.description
-                    url = packageJson.repository.url
-
-                    licenses {
-                        license {
-                            name = packageJson.license
-                            url = packageJson.repository.baseUrl + '/blob/master/' + packageJson.licenseFilename
-                            distribution = 'repo'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id = packageJson.author.username
-                            name = packageJson.author.name
-                        }
-                    }
-                }
-            }
-        }
-
-        repositories {
-            maven {
-                url "file://${projectDir}/../android/maven"
-            }
-        }
+    implementation ("jp.elestyle.androidapp:elepay:3.5.0") {
+        exclude group: "androidx.appcompat", module: "appcompat"
     }
 }
