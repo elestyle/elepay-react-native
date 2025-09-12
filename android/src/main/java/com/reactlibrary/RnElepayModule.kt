@@ -35,7 +35,7 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
         val googlePayEnv = if (configs.hasKey("googlePayEnvironment")) {
             try {
                 configs.getString("googlePayEnvironment")?.let {
-                    if (it.toLowerCase().contains("test")) GooglePayEnvironment.TEST
+                    if (it.lowercase().contains("test")) GooglePayEnvironment.TEST
                     else GooglePayEnvironment.PRODUCTION
                 }
             } catch (e: Exception) {
@@ -146,7 +146,7 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
     }
 
     private fun retrieveLanguageKey(languageKeyStr: String): LanguageKey =
-        when (languageKeyStr.toLowerCase()) {
+        when (languageKeyStr.lowercase()) {
             "english" -> LanguageKey.English
             "simplifiedchinese" -> LanguageKey.SimplifiedChinese
             "traditionalchinese" -> LanguageKey.TraditionalChinese
@@ -156,7 +156,7 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
         }
 
     private fun retrieveTheme(themeName: String): ElepayTheme =
-        when(themeName.toLowerCase(Locale.ROOT)) {
+        when(themeName.lowercase()) {
             "light" -> ElepayTheme.Light
             "dark" -> ElepayTheme.Dark
             else -> ElepayTheme.System
