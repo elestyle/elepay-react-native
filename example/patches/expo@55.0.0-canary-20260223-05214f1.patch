@@ -1,0 +1,67 @@
+diff --git a/ios/AppDelegates/EXReactRootViewFactory.h b/ios/AppDelegates/EXReactRootViewFactory.h
+index 2daec5d4629ba0db42b2fff9da28d78e5f71cf7c..5a0de0ef69e7889fecb5c5a1152f986acee53d47 100644
+--- a/ios/AppDelegates/EXReactRootViewFactory.h
++++ b/ios/AppDelegates/EXReactRootViewFactory.h
+@@ -28,6 +28,7 @@ NS_SWIFT_NAME(ExpoReactRootViewFactory)
+ - (UIView *)superViewWithModuleName:(NSString *)moduleName
+                   initialProperties:(nullable NSDictionary *)initialProperties
+                       launchOptions:(nullable NSDictionary *)launchOptions
++              bundleConfiguration:(nullable RCTBundleConfiguration *)bundleConfiguration
+                devMenuConfiguration:(nullable RCTDevMenuConfiguration *)devMenuConfiguration;
+ #else
+ - (UIView *)superViewWithModuleName:(NSString *)moduleName
+diff --git a/ios/AppDelegates/EXReactRootViewFactory.mm b/ios/AppDelegates/EXReactRootViewFactory.mm
+index 6fecc8df0a98a85c3a28bfa740af2eeab7ba11b9..ef0d5971ae64ba207a74cc29d038afc5f32a44a8 100644
+--- a/ios/AppDelegates/EXReactRootViewFactory.mm
++++ b/ios/AppDelegates/EXReactRootViewFactory.mm
+@@ -35,24 +35,26 @@
+ - (UIView *)viewWithModuleName:(NSString *)moduleName
+              initialProperties:(nullable NSDictionary *)initialProperties
+                  launchOptions:(nullable NSDictionary *)launchOptions
++           bundleConfiguration:(RCTBundleConfiguration *)bundleConfiguration
+           devMenuConfiguration:(RCTDevMenuConfiguration *)devMenuConfiguration
+ {
+   if (self.reactDelegate != nil) {
+     return [self.reactDelegate createReactRootViewWithModuleName:moduleName initialProperties:initialProperties launchOptions:launchOptions];
+   }
+-  return [super viewWithModuleName:moduleName initialProperties:initialProperties launchOptions:launchOptions devMenuConfiguration:devMenuConfiguration];
++  return [super viewWithModuleName:moduleName initialProperties:initialProperties launchOptions:launchOptions bundleConfiguration:bundleConfiguration devMenuConfiguration:devMenuConfiguration];
+ }
+ 
+ - (UIView *)superViewWithModuleName:(NSString *)moduleName
+                   initialProperties:(nullable NSDictionary *)initialProperties
+                       launchOptions:(nullable NSDictionary *)launchOptions
++              bundleConfiguration:(nullable RCTBundleConfiguration *)bundleConfiguration
+                devMenuConfiguration:(nullable RCTDevMenuConfiguration *)devMenuConfiguration
+ {
+   if (devMenuConfiguration == nil) {
+     devMenuConfiguration = [RCTDevMenuConfiguration defaultConfiguration];
+   }
+ 
+-  return [super viewWithModuleName:moduleName initialProperties:initialProperties launchOptions:launchOptions devMenuConfiguration:devMenuConfiguration];
++  return [super viewWithModuleName:moduleName initialProperties:initialProperties launchOptions:launchOptions bundleConfiguration:bundleConfiguration devMenuConfiguration:devMenuConfiguration];
+ }
+ #else
+ - (UIView *)viewWithModuleName:(NSString *)moduleName
+diff --git a/ios/AppDelegates/ExpoReactNativeFactory.swift b/ios/AppDelegates/ExpoReactNativeFactory.swift
+index 925e0f9a44cf160543b76967a094b2cc3221da7c..c881999d004a2ba322e9d31cbcd60289f11d7f09 100644
+--- a/ios/AppDelegates/ExpoReactNativeFactory.swift
++++ b/ios/AppDelegates/ExpoReactNativeFactory.swift
+@@ -118,6 +118,7 @@ public class ExpoReactNativeFactory: ExpoReactNativeFactoryObjC, ExpoReactNative
+         withModuleName: moduleName ?? defaultModuleName,
+         initialProperties: initialProps,
+         launchOptions: launchOptions ?? [:],
++        bundleConfiguration: RCTBundleConfiguration.default(),
+         devMenuConfiguration: self.devMenuConfiguration
+       )
+ #else
+@@ -133,7 +134,8 @@ public class ExpoReactNativeFactory: ExpoReactNativeFactoryObjC, ExpoReactNative
+         withModuleName: moduleName ?? defaultModuleName,
+         initialProperties: initialProps,
+         launchOptions: launchOptions,
+-        devMenuConfiguration: self.devMenuConfiguration
++        bundleConfiguration: RCTBundleConfiguration.default(),
++        devMenuConfiguration: self.devMenuConfiguration ?? RCTDevMenuConfiguration.default()
+       )
+ #else
+       rootView = rootViewFactory.view(

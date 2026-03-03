@@ -4,9 +4,8 @@ const cache = new Map<string, string>();
 let initialized = false;
 
 export async function initKV(keys: string[]): Promise<void> {
-  const result = await AsyncStorage.getMany(keys);
-  for (const key of keys) {
-    const value = result[key];
+  const pairs = await AsyncStorage.multiGet(keys);
+  for (const [key, value] of pairs) {
     if (value != null) {
       cache.set(key, value);
     }

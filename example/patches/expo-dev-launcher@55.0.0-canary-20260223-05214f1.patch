@@ -1,0 +1,16 @@
+diff --git a/ios/EXDevLauncherController.m b/ios/EXDevLauncherController.m
+index c9ca6fbfe758e6f97d6f05b0c88e382f0eebae2f..65ecd7c2cf9d0be9fd6790fc2cd515829c962ecf 100644
+--- a/ios/EXDevLauncherController.m
++++ b/ios/EXDevLauncherController.m
+@@ -473,10 +473,7 @@ static const NSTimeInterval EXDevLauncherDefaultRequestTimeout = 10.0;
+     self.sourceUrl = bundleUrl;
+ 
+ #if RCT_DEV
+-    // Connect to the websocket, ignore downloaded update bundles
+-    if (![bundleUrl.scheme isEqualToString:@"file"]) {
+-      [[RCTPackagerConnection sharedPackagerConnection] setSocketConnectionURL:bundleUrl];
+-    }
++    // RCTPackagerConnection.sharedPackagerConnection was removed in React Native 0.84
+     self.networkInterceptor = [[EXDevLauncherNetworkInterceptor alloc] initWithBundleUrl:bundleUrl];
+ #endif
+ 

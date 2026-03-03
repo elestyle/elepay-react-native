@@ -1,0 +1,28 @@
+diff --git a/ios/DevMenuPackagerConnectionHandler.swift b/ios/DevMenuPackagerConnectionHandler.swift
+index aaeb55069c0bc1d92a69fd446b3607d0bc877ee5..c82cd78a44663e92f0d8993fef2742a699f83869 100644
+--- a/ios/DevMenuPackagerConnectionHandler.swift
++++ b/ios/DevMenuPackagerConnectionHandler.swift
+@@ -17,21 +17,8 @@ class DevMenuPackagerConnectionHandler {
+ #if DEBUG
+     self.swizzleRCTDevMenuShow()
+ 
+-    RCTPackagerConnection
+-      .shared()
+-      .addNotificationHandler(
+-        self.sendDevCommandNotificationHandler,
+-        queue: DispatchQueue.main,
+-        forMethod: "sendDevCommand"
+-      )
+-
+-    RCTPackagerConnection
+-      .shared()
+-      .addNotificationHandler(
+-        self.devMenuNotificationHanlder,
+-        queue: DispatchQueue.main,
+-        forMethod: "devMenu"
+-      )
++    // RCTPackagerConnection.shared() was removed in React Native 0.84.
++    // The packager connection is no longer a singleton.
+ #endif
+   }
+ 
